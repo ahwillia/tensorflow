@@ -413,8 +413,11 @@ class CheckpointSaverHook(session_run_hook.SessionRunHook):
     self._checkpoint_dir = checkpoint_dir
     self._save_path = os.path.join(checkpoint_dir, checkpoint_basename)
     self._scaffold = scaffold
-    self._timer = SecondOrStepTimer(every_secs=save_secs,
-                                    every_steps=save_steps)
+    try:
+      self._timer = SecondOrStepTimer(every_secs=save_secs,
+                                      every_steps=save_steps)
+    except ValueError:
+      raise ValueError("Either save_secs or save_steps should be provided.")
     self._listeners = listeners or []
     self._steps_per_run = 1
 
